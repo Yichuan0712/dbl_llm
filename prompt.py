@@ -41,6 +41,13 @@ Carefully analyze the document, **line by line and section by section**, and fol
       "Kinase UniProt ID": "Substrate UniProt ID",
       ...
   }}>>
+-- For example:
+    <<{{
+    "Q86U12": "Q9FCE5",  
+    "Q86123": "Q15502",  
+    "Q86U33": "Q04950", 
+    "Q23454": "Q44444" 
+    }}>> 
 """
 
 
