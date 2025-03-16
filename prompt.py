@@ -84,7 +84,7 @@ def prompt_test(full_paper_text, model_name="gemini_15_pro", max_retries=5, init
                 raise ValueError(f"No dictionary found in the extracted content.")
 
             if not match_dict:
-                raise ValueError(f"Dictionary extraction failed: No valid entries found!")
+                return None, res, "\n\n".join(all_content), total_usage, truncated
 
             return match_dict, res, "\n\n".join(all_content), total_usage, truncated
 
