@@ -64,6 +64,7 @@ def prompt_test(full_paper_text, model_name="gemini_15_pro", max_retries=5, init
     while retries < max_retries:
         try:
             res, content, usage, truncated = get_llm_response(messages, question, model=model_name)
+            print(content)
             content = fix_angle_brackets(content)
 
             total_usage += usage
