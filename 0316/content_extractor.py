@@ -10,3 +10,15 @@ def extract_article_content(html):
         return '\n'.join([p.get_text() for p in article_section.find_all('p')])
     else:
         return "NOT FOUND"
+
+
+def extract_abstract(html):
+    soup = BeautifulSoup(html, 'html.parser')
+
+    article_section = soup.find('section', {'class': 'abstract'})
+
+    if article_section:
+        return '\n'.join([p.get_text() for p in article_section.find_all('p')])
+    else:
+        return "NOT FOUND"
+
