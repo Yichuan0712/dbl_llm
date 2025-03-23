@@ -12,47 +12,46 @@ def extract_possible_uniprot_ids(text):
     return unique_ids
 
 
-def generate_prompt_with_uniprot_ids(full_paper_text):
-    possible_ids = extract_possible_uniprot_ids(full_paper_text)
+def generate_prompt(full_paper_text):
     return f"""
-The following text is an excerpt from a scientific paper discussing kinase-substrate relationships:
+The following text is an excerpt from a scientific paper discussing enzymatic activity:
 {full_paper_text}
 
-### **Extracted Possible UniProt IDs**
-These are all potential UniProt IDs found in the text:
-{", ".join(possible_ids) if possible_ids else "None found"}
+### Task: Extract Enzyme–Substrate Relationships
 
-Carefully analyze the document, **line by line and section by section**, and follow these steps:
+Carefully analyze the text, **line by line and section by section**, and follow these steps:
 
-### Step 1: Identify Kinases and Their Substrates
-- Locate all **protein kinases** mentioned in the text. A kinase is an enzyme that catalyzes the **phosphorylation** of a substrate.
-- Identify the **substrates** that each kinase phosphorylates.
-- Ensure that each kinase-substrate pair is **directly supported by evidence** in the text.
+### Step 1: Identify Enzymes and Their Substrates
+- Locate all **enzymes** mentioned in the text. An enzyme is a protein that **catalyzes a biochemical reaction**, such as phosphorylation, dephosphorylation, cleavage, methylation, etc.
+- For each enzyme, identify the **specific substrate or reactant** it acts upon.
+- Only include relationships where the **action is explicitly stated or clearly implied** in the text (e.g., "Enzyme A dephosphorylates Protein B at site X").
 
-### Step 2: Validate UniProt IDs
-- Cross-check the possible UniProt IDs against the **correct species and protein function**.
-- If multiple isoforms exist, list them all under `"Possible Matches"` and select the **most relevant** one based on the text.
+### Step 2: Normalize Names (If Possible)
+- Whenever possible, use the **standard gene symbol**, **protein name**, or **EC number** to represent the enzyme and substrate.
+- If a normalized name cannot be confidently determined from context, fall back to using the **exact wording from the original text**.
 
 ### Step 3: Format the Output
-- Present the kinase-substrate pairs as a **Python dictionary** enclosed in double angle brackets <<>>.
-- Each dictionary entry should follow this format:
+- Present each enzyme–substrate pair as a **Python list** (in text), using the best available names per Step 2.
+- The list format should look like this:
   python
-  <<{{
-      "Kinase UniProt ID": "Substrate UniProt ID",
+  <<[
+      ["Enzyme Name", "Substrate Name"],
       ...
-  }}>>
+  ]>>
+
 -- For example:
-    <<{{
-    "Q86U12": "Q9FCE5",  
-    "Q86123": "Q15502",  
-    "Q86U33": "Q04950", 
-    "Q23454": "Q44444" 
-    }}>> 
+    <<[
+        ["PPM1D", "RUNX2"],
+        ["CDK1", "Histone H1"],
+        ["PPP2CA", "TP53"],
+        ["CASP3", "PARP1"]
+    ]>>
 """
 
 
+
 def prompt_test(full_paper_text, model_name="gemini_15_pro", max_retries=5, initial_wait=1):
-    msg = generate_prompt_with_uniprot_ids(full_paper_text)
+    msg = generate_prompt(full_paper_text)
     messages = [msg]
     question = "Do not give the final result immediately. First, explain your thought process, then provide the answer."
 
